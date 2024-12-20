@@ -10,6 +10,8 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 #define WKP "mario"
+//might not need this?
+#define PP "luigi"
 
 #define HANDSHAKE_BUFFER_SIZE 10
 #define BUFFER_SIZE 1000
@@ -21,6 +23,7 @@
 #define MESSAGE 3
 #define EXIT 4
 
+int err();
 
 int server_handshake(int *to_client);
 int client_handshake(int *to_server);
@@ -32,7 +35,8 @@ int server_connect(int from_client);
 int server_setup();
 
 //multi_server
+/*
 int multi_server_setup();
 int multi_server_connect(int from_client, struct message m);
-
+*/
 #endif
