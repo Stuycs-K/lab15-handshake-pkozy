@@ -50,6 +50,7 @@ int server_handshake(int *to_client) {
 	int ack;
 	bytes = read(from_client, &ack, 4);
 	if(bytes==-1)err();
+	if(ack != synack+1)err();
 	
 	return from_client;
 }
