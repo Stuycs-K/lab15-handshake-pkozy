@@ -10,12 +10,12 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_setup() {
-	printf("called server setup\n");
+	// 1 server making wkp
 	mkfifo(WKP, 0666);
-	//it will be stuck here until the client opens it to write! good thing!!!
-	printf("made wkp, opening... (will stall)\n");
+	// 2 server opening wkp (BLOCKS)
 	int from_client = open(WKP, O_RDONLY, 0);
-	printf("client touched the wkp\n");
+	
+	//4 remove wkp
 	remove(WKP);
 	return from_client;
 }
@@ -30,7 +30,27 @@ int server_setup() {
   returns the file descriptor for the upstream pipe (see server setup).
   =========================*/
 int server_handshake(int *to_client) {
+	int bytes;
 	int from_client = server_setup();
+	//5 Server reading SYN (pp?)
+	char PP[8];
+	bytes = read(from_client, PP, 8);
+	if(bytes==-1)err();
+	
+	//6 Server opening the Private Pipe [Unblock client]	
+	*to_client = open(PP, O_WRONLY, 0);
+	
+	//7 Server sending SYN_ACK	
+	srand(time(NULL));
+	int synack = rand();
+	bytes = write(*to_client, &synack, 4);
+	if(bytes==-1)err();
+	
+	//9 Server reading final ACK
+	int ack;
+	bytes = read(from_client, &ack, 4);
+	if(bytes==-1)err();
+	
 	return from_client;
 }
 
@@ -45,23 +65,44 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
-	printf("called client handshake\n");
-	//mkfifo(PP, 0666);
+	int bytes;
+	//3 client making private pipe
+	char PP[8];
+	sprintf(PP, "%s%d", "PP", getpid());
+	if(mkfifo(PP, 0666)==-1)err();
+	
+	//3 client opening wkp (unblocking server)
 	*to_server = open(WKP, O_WRONLY, 0);
-	printf("client opened wkp\n");
-	//it will be stuck here until the server opens it to read
-	int from_server = open(PP, O_WRONLY, 0);
-	//unblock wkp
+	if(*to_server==-1)err();
 
+	//3 Client Writing PP to WKP (matches with step 5)
+	bytes = write(*to_server, PP, sizeof(PP));
+	if(bytes==-1)err();	
+	
+	//3 Client Opening PP [BLOCKS]
+	int from_server = open(PP, O_RDONLY, 0);
 
+	//8 client delete pp
+	remove(PP);
+	
+	//8 Client reading SYN_ACK (matches with step 7)
+	int synack;
+	bytes = read(from_server, &synack, 4);
+	if(bytes==-1)err();
+	
+	//8 Client Sending (matches with step 9) ACK
+	int ack = synack +1;
+	bytes = write(*to_server, &ack, 4);
+	if(bytes==-1)err();
+	
 	return from_server;
 }
 
 int err(){
-  printf("errno %d\n", errno);
-  strerror(errno);
-  printf("%s\n", strerror(errno));
-  exit(0);
+	printf("errno %d\n", errno);
+	strerror(errno);
+	printf("%s\n", strerror(errno));
+	exit(0);
 }
 
 /*=========================
