@@ -2,7 +2,7 @@
 
 void sighandler(int signo){
 	if(signo == SIGINT){
-		remove(WKP);
+		//remove(PP);
 		exit(0);
 	}
 }

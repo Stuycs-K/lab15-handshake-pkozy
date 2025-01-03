@@ -16,7 +16,12 @@ int main() {
 		int from_client = 0;
 		int bytes = 0;
 		
-		from_client = server_handshake( &to_client );
+		from_client = server_setup();
+		fork();
+		if(pid==0){
+			//child
+			server_handshake_half(*to_client, from_client);
+		}
 		
 		while(1){
 			srand(time(NULL));

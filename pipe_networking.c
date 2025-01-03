@@ -99,6 +99,29 @@ int client_handshake(int *to_server) {
 	return from_server;
 }
 
+void server_handshake_half(int *to_client, int from_client){
+	int bytes = 0;
+	
+	char PP[8];
+	bytes = read(from_client, PP, 8);
+	if(bytes!=8)err();
+	
+	//6 Server opening the Private Pipe [Unblock client]	
+	*to_client = open(PP, O_WRONLY, 0);
+	
+	//7 Server sending SYN_ACK	
+	srand(time(NULL));
+	int synack = rand();
+	bytes = write(*to_client, &synack, 4);
+	if(bytes==-1)err();
+	
+	//9 Server reading final ACK
+	int ack;
+	bytes = read(from_client, &ack, 4);
+	if(bytes==-1)err();
+	if(ack != synack+1)err();	
+}
+
 int err(){
 	printf("errno %d\n", errno);
 	strerror(errno);
