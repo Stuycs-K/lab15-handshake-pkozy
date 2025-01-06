@@ -18,20 +18,24 @@ int main() {
 		
 		from_client = server_setup();
 		fork();
-		if(pid==0){
+		if(getpid()==0){
 			//child
-			server_handshake_half(*to_client, from_client);
-		}
-		
-		while(1){
-			srand(time(NULL));
-			int send = rand()%100 + 1;
-			bytes = write(to_client, &send, 4);
-			if(bytes!=4){
-				if(errno==32){break;}
-				else{err();}
-			}
-			sleep(1);
+			server_handshake_half(&to_client, from_client);
+			printf("finished handshake\n");
+			while(1){
+				char recieved[29];
+				bytes = read(from_client, &recieved, 29);
+				if(bytes!=29){
+					if(errno==32){break;}
+					else{err();}
+				}
+				//strfry without getting the \n in there ruinign it
+				recieved[29] = ' ';
+				strfry(recieved);
+				recieved[29] = '\n';
+				
+				bytes = write(to_client, &recieved, 29);
+			}			
 		}
 		
 		close(to_client);

@@ -14,14 +14,19 @@ int main() {
 	int from_server = 0;
 
 	from_server = client_handshake( &to_server );
+	printf("finished handshake\n");
 	
 	while(1){
-		int recieved;
-		bytes = read(from_server, &recieved, 4);
-		if(bytes!=4){
+		char send[29] = "bho bup up booging bheir bop";
+		bytes = write(to_server, &send, 29);
+		if(bytes!=29){
 			if(bytes==0)exit(0);
 			err();
 		}
-		printf("recieved %d!\n", recieved);
+		char recieved[29];
+		bytes = read(from_server, &recieved, 29);
+		if(bytes!=29)err();
+		printf("%s", recieved);
+		sleep(1);
 	}
 }
