@@ -7,15 +7,18 @@ Upon running, type in username and password.
 To check your statisics -- 'stats'  
 To check leaderboard -- 'leaderboard'  
 To start a game -- 'new game'  
-To join a game -- 'join game'  
+To join a game -- 'join game' 
+
 If you started the game:  
     select number of rounds  
     select number of players (including self, from 2-10)  
     wait for the expected number of players to join  
+    
 If joining game:  
     wait for a new game to be started  
     once ready, automatically be added to the new game  
     wait for the expected number of players to join  
+    
 The rest is the same for both:  
     Once all players have joined, the first round automatically starts  
     Type either rock, paper or scissors  
