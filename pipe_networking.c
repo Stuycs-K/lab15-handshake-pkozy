@@ -69,7 +69,8 @@ int client_handshake(int *to_server) {
 	int bytes;
 	//3 client making private pipe
 	char PP[8];
-	sprintf(PP, "%s%d", "PP", getpid());
+	srand(time(NULL));
+	sprintf(PP, "%s%d", "PP", rand()%10000);
 	if(mkfifo(PP, 0666)==-1)err();
 	
 	//3 client opening wkp (unblocking server)
