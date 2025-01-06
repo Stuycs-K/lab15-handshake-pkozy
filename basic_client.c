@@ -14,7 +14,6 @@ int main() {
 	int from_server = 0;
 
 	from_server = client_handshake( &to_server );
-	printf("finished handshake\n");
 	
 	while(1){
 		char send[29] = "bho bup up booging bheir bop";
@@ -26,7 +25,7 @@ int main() {
 		char recieved[29];
 		bytes = read(from_server, &recieved, 29);
 		if(bytes!=29)err();
-		printf("%s", recieved);
+		printf("%s\n", recieved);
 		sleep(1);
 	}
 }

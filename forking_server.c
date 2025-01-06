@@ -15,19 +15,18 @@ int main() {
 		int to_client = 0;
 		int from_client = 0;
 		int bytes = 0;
+		pid_t pid;
 		
 		from_client = server_setup();
-		fork();
-		if(getpid()==0){
+		pid = fork();
+		if(pid==0){
 			//child
 			server_handshake_half(&to_client, from_client);
-			printf("finished handshake\n");
 			while(1){
 				char recieved[29];
 				bytes = read(from_client, &recieved, 29);
 				if(bytes!=29){
 					if(errno==32){break;}
-					else{err();}
 				}
 				//strfry without getting the \n in there ruinign it
 				recieved[29] = ' ';
@@ -36,7 +35,7 @@ int main() {
 				
 				bytes = write(to_client, &recieved, 29);
 			}			
-		}
+		} 
 		
 		close(to_client);
 		close(from_client);
