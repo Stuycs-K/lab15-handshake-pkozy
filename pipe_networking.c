@@ -101,6 +101,7 @@ int client_handshake(int *to_server) {
 }
 
 void server_handshake_half(int *to_client, int from_client){
+	//printf("setup was fine, omw finish up handshake\n");
 	int bytes = 0;
 	
 	char PP[8];
@@ -121,6 +122,8 @@ void server_handshake_half(int *to_client, int from_client){
 	bytes = read(from_client, &ack, 4);
 	if(bytes==-1)err();
 	if(ack != synack+1)err();	
+	
+	//printf("handshake all clear!\n");
 }
 
 int err(){

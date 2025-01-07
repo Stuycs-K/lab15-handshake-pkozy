@@ -22,6 +22,7 @@ int main() {
 		if(pid==0){
 			//child
 			server_handshake_half(&to_client, from_client);
+			//printf("im OUT of the handshake\n");
 			while(1){
 				char recieved[29];
 				bytes = read(from_client, &recieved, 29);
